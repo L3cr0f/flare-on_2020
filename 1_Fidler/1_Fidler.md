@@ -39,7 +39,7 @@ ghost
 
 Great! Now we can see the second screen:
 
-![Fidler 1](Images/fidler_2.png)
+![Fidler 2](Images/fidler_2.png)
 
 If we check the source code, we see the following sentence in the _game_screen_ function:
 
@@ -73,4 +73,4 @@ Finally, we got the key!
 idle_with_kitty@flare-on.com
 ```
 
-![Fidler 1](Images/fidler_3.png)
+![Fidler 3](Images/fidler_3.png)
