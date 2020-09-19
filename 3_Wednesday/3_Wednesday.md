@@ -63,14 +63,14 @@ If we look backwards, we will see the following instructions that modifies _EAX_
 
 ```
 mov     esi, ds:_day_index__HImZp3MMPNE3pGzeJ4pUlA		-> ESI = current day index
-add     esi, 1			-> ESI = ESI + 1 (next day index)
-mov     edi, esi		-> EDI = ESI
+add     esi, 1							-> ESI = ESI + 1 (next day index)
+mov     edi, esi						-> EDI = ESI
 ...
-mov     eax, _obstacles__Xqz7GG9aS72pTPD9ceUjZPNg	-> EAX = 0x43EB40
+mov     eax, _obstacles__Xqz7GG9aS72pTPD9ceUjZPNg		-> EAX = 0x43EB40
 ...
-mov     edx, [eax]		-> EDX = buffer at 0x43EB40
+mov     edx, [eax]						-> EDX = buffer at 0x43EB40
 ...
-movsx   eax, byte ptr [eax+edi+8]		-> EAX = buffer at 0x43EB48 + day index
+movsx   eax, byte ptr [eax+edi+8]				-> EAX = buffer at 0x43EB48 + day index
 
 ```
 
