@@ -223,15 +223,15 @@ Func encode_buffer(ByRef $computer_name_bytes_lower_buffer)
 		Local $file_size = get_file_size($file_handle)
 		If $file_size <> -$number_1 AND DllStructGetSize($computer_name_bytes_lower_buffer) < $file_size - $number_54 Then
 			Local $buffer = DllStructCreate(decode_string($os[$number_30]) & $file_size & decode_string($os[$number_31]))
-			Local $write_result = write_file($file_handle, $buffer)
+			Local $write_result = read_file($file_handle, $buffer)
 			If $write_result <> -$number_1 Then
-				Local $flxmdchrqd = DllStructCreate(decode_string($os[$number_32]) & $file_size - $number_54 & decode_string($os[$number_31]), DllStructGetPtr($buffer))
+				Local $file_buffer = DllStructCreate(decode_string($os[$number_32]) & $file_size - $number_54 & decode_string($os[$number_31]), DllStructGetPtr($buffer))
 				Local $flqgwnzjzc = $number_1
 				Local $floctxpgqh = decode_string($os[$number_20])
 				For $counter = $number_1 To DllStructGetSize($computer_name_bytes_lower_buffer)
 					Local $int_byte_buffer = Number(DllStructGetData($computer_name_bytes_lower_buffer, $number_1, $counter))
 					For $fltajbykxx = $number_6 To $number_0 Step -$number_1
-						$int_byte_buffer += BitShift(BitAND(Number(DllStructGetData($flxmdchrqd, $number_2, $flqgwnzjzc)), $number_1), -$number_1 * $fltajbykxx)
+						$int_byte_buffer += BitShift(BitAND(Number(DllStructGetData($file_buffer, $number_2, $flqgwnzjzc)), $number_1), -$number_1 * $fltajbykxx)
 						$flqgwnzjzc += $number_1
 					Next
 					$floctxpgqh &= Chr(BitShift($int_byte_buffer, $number_1) + BitShift(BitAND($int_byte_buffer, $number_1), -$number_7))
@@ -254,6 +254,7 @@ Func modify_qr_code(ByRef $qr_code_struct)
 		encode_buffer($computer_name_bytes_lower_buffer)
 		Local $sha256_struct = DllStructCreate(decode_string($os[$number_33]))
 		DllStructSetData($sha256_struct, $number_3, $number_32)
+		# CryptAcquireContextA
 		Local $crypt_struct = DllCall(decode_string($os[$number_34]), decode_string($os[$number_26]), decode_string($os[$number_35]), decode_string($os[$number_28]), DllStructGetPtr($sha256_struct, $number_1), decode_string($os[$number_28]), $number_0, decode_string($os[$number_28]), $number_0, decode_string($os[$number_36]), $number_24, decode_string($os[$number_36]), $number_4026531840)
 		If $crypt_struct[$number_0] <> $number_0 Then
 		    # CryptCreateHash -> CALG_SHA256
@@ -266,8 +267,8 @@ Func modify_qr_code(ByRef $qr_code_struct)
 					$crypt_struct = DllCall(decode_string($os[$number_34]), decode_string($os[$number_26]), decode_string($os[$number_40]), decode_string($os[$number_28]), DllStructGetData($sha256_struct, $number_2), decode_string($os[$number_36]), $number_2, decode_string($os[$number_28]), DllStructGetPtr($sha256_struct, $number_4), decode_string($os[$number_28]), DllStructGetPtr($sha256_struct, $number_3), decode_string($os[$number_36]), $number_0)
 					If $crypt_struct[$number_0] <> $number_0 Then
 					    # 0x0802000010660000 -> Blob header
-					    # 0x20000000 -> Key length = 0x2
-					    # SHA256 (it only takes the first two bytes)
+					    # 0x20000000 -> Key length = 0x20 = 32
+					    # SHA256
 						Local $key_bytes = Binary(decode_string($os[$number_41]) & decode_string($os[$number_42]) & decode_string($os[$number_43]) & decode_string($os[$number_44]) & decode_string($os[$number_45]) & decode_string($os[$number_46])) & DllStructGetData($sha256_struct, $number_4)
 						# 0xCD4B32C650CF21BDA184D8913E6F920A37A4F3963736C042C459EA07B79EA443FFD1898BAE49B115F6CB1E2A7C1AB3C4C25612A519035F18FB3B17528B3AECAF3D480E98BF8A635DAF974E0013535D231E4B75B2C38B804C7AE4D266A37B36F2C555BF3A9EA6A58BC8F906CC665EAE2CE60F2CDE38FD30269CC4CE5BB090472FF9BD26F91119B8C1484FE169EB9134F431FEEDE1DCEBA17914610819F1B21F110F8321B2A5D14D7721DB12C13BED9147F6F1706AE14411A152
 						Local $encrypted_data_bytes = Binary(decode_string($os[$number_41]) & decode_string($os[$number_47]) & decode_string($os[$number_48]) & decode_string($os[$number_49]) & decode_string($os[$number_50]) & decode_string($os[$number_51]) & decode_string($os[$number_52]) & decode_string($os[$number_53]) & decode_string($os[$number_54]) & decode_string($os[$number_55]) & decode_string($os[$number_56]) & decode_string($os[$number_57]) & decode_string($os[$number_58]) & decode_string($os[$number_59]) & decode_string($os[$number_60]) & decode_string($os[$number_61]) & decode_string($os[$number_62]) & decode_string($os[$number_63]) & decode_string($os[$number_64]) & decode_string($os[$number_65]) & decode_string($os[$number_66]) & decode_string($os[$number_67]) & decode_string($os[$number_68]) & decode_string($os[$number_69]) & decode_string($os[$number_70]) & decode_string($os[$number_71]) & decode_string($os[$number_72]) & decode_string($os[$number_73]) & decode_string($os[$number_74]) & decode_string($os[$number_75]) & decode_string($os[$number_76]) & decode_string($os[$number_77]) & decode_string($os[$number_78]) & decode_string($os[$number_79]) & decode_string($os[$number_80]) & decode_string($os[$number_81]) & decode_string($os[$number_82]) & decode_string($os[$number_83]) & decode_string($os[$number_84]) & decode_string($os[$number_85]) & decode_string($os[$number_86]) & decode_string($os[$number_87]) & decode_string($os[$number_88]) & decode_string($os[$number_89]) & decode_string($os[$number_90]) & decode_string($os[$number_91]) & decode_string($os[$number_92]) & decode_string($os[$number_93]) & decode_string($os[$number_94]) & decode_string($os[$number_95]) & decode_string($os[$number_96]) & decode_string($os[$number_97]) & decode_string($os[$number_98]) & decode_string($os[$number_99]) & decode_string($os[$number_100]) & decode_string($os[$number_101]) & decode_string($os[$number_102]) & decode_string($os[$number_103]) & decode_string($os[$number_104]) & decode_string($os[$number_105]) & decode_string($os[$number_106]) & decode_string($os[$number_107]) & decode_string($os[$number_108]) & decode_string($os[$number_109]) & decode_string($os[$number_110]) & decode_string($os[$number_111]) & decode_string($os[$number_112]) & decode_string($os[$number_113]) & decode_string($os[$number_114]) & decode_string($os[$number_115]) & decode_string($os[$number_116]) & decode_string($os[$number_117]))
@@ -342,7 +343,7 @@ Func get_md5(ByRef $flkhfbuyon)
 	Return $fluupfrkdz
 EndFunc
 
-Func arepfnkwypw()
+Func get_version()
 	Local $flgqbtjbmi = -$number_1
 	Local $fltpvjccvq = DllStructCreate(decode_string($os[$number_128]))
 	DllStructSetData($fltpvjccvq, $number_1, DllStructGetSize($fltpvjccvq))
@@ -422,9 +423,9 @@ Func arepqqkaeto($flmwacufre, $fljxaivjld)
 	DllStructSetData($flmwacufreheadermagic, $number_1, $number_19778)
 	Local $flivpiogmf = create_file_2($fljxaivjld, False)
 	If $flivpiogmf <> -$number_1 Then
-		Local $flchlkbend = aremfkxlayv($flivpiogmf, DllStructGetPtr($flmwacufreheadermagic), DllStructGetSize($flmwacufreheadermagic))
+		Local $flchlkbend = write_file($flivpiogmf, DllStructGetPtr($flmwacufreheadermagic), DllStructGetSize($flmwacufreheadermagic))
 		If $flchlkbend <> -$number_1 Then
-			$flchlkbend = aremfkxlayv($flivpiogmf, DllStructGetPtr($flmwacufre[$number_0]), DllStructGetSize($flmwacufre[$number_0]))
+			$flchlkbend = write_file($flivpiogmf, DllStructGetPtr($flmwacufre[$number_0]), DllStructGetSize($flmwacufre[$number_0]))
 			If $flchlkbend <> -$number_1 Then
 				$fljiyeluhx = $number_0
 			EndIf
@@ -446,9 +447,9 @@ Func set_qr_code_in_screen($flbaqvujsl, $flkelsuuiy)
 			Local $flumnoetuu = DllStructGetData($flbaqvujsl[$number_0], decode_string($os[$number_7])) > $number_0 ? $flwldjlwrq - $number_1 : $number_0
 			Local $flqphcjgtp = DllStructCreate(decode_string($os[$number_148]))
 			For $fllrcvawmx = $number_0 To $flwldjlwrq - $number_1
-				$flamtlcncx = aremfkxlayv($flvikmhxwu, DllStructGetPtr($flbaqvujsl[$number_1], Abs($flumnoetuu - $fllrcvawmx) + $number_1), DllStructGetData($flbaqvujsl[$number_0], decode_string($os[$number_6])) * $number_3)
+				$flamtlcncx = write_file($flvikmhxwu, DllStructGetPtr($flbaqvujsl[$number_1], Abs($flumnoetuu - $fllrcvawmx) + $number_1), DllStructGetData($flbaqvujsl[$number_0], decode_string($os[$number_6])) * $number_3)
 				If $flamtlcncx = -$number_1 Then ExitLoop
-				$flamtlcncx = aremfkxlayv($flvikmhxwu, DllStructGetPtr($flqphcjgtp), Mod(DllStructGetData($flbaqvujsl[$number_0], decode_string($os[$number_6])), $number_4))
+				$flamtlcncx = write_file($flvikmhxwu, DllStructGetPtr($flqphcjgtp), Mod(DllStructGetData($flbaqvujsl[$number_0], decode_string($os[$number_6])), $number_4))
 				If $flamtlcncx = -$number_1 Then ExitLoop
 			Next
 			If $flamtlcncx <> -$number_1 Then
@@ -472,13 +473,13 @@ EndFunc
 
 GUIDelete()
 
-Func aremfkxlayv($fllsczdyhr, $flbfzgxbcy, $flutgabjfj)
-	If $fllsczdyhr <> -$number_1 Then
-		Local $flvfnkosuf = DllCall(decode_string($os[$number_25]), decode_string($os[$number_150]), decode_string($os[$number_151]), decode_string($os[$number_28]), $fllsczdyhr, decode_string($os[$number_152]), $number_0, decode_string($os[$number_28]), $number_0, decode_string($os[$number_150]), $number_2)
+Func write_file($file_handle, $write_buffer, $byte_to_write)
+	If $file_handle <> -$number_1 Then
+		Local $flvfnkosuf = DllCall(decode_string($os[$number_25]), decode_string($os[$number_150]), decode_string($os[$number_151]), decode_string($os[$number_28]), $file_handle, decode_string($os[$number_152]), $number_0, decode_string($os[$number_28]), $number_0, decode_string($os[$number_150]), $number_2)
 		If $flvfnkosuf[$number_0] <> -$number_1 Then
 			Local $flwzfbbkto = DllStructCreate(decode_string($os[$number_150]))
-			$flvfnkosuf = DllCall(decode_string($os[$number_25]), decode_string($os[$number_28]), decode_string($os[$number_153]), decode_string($os[$number_28]), $fllsczdyhr, decode_string($os[$number_28]), $flbfzgxbcy, decode_string($os[$number_150]), $flutgabjfj, decode_string($os[$number_28]), DllStructGetPtr($flwzfbbkto), decode_string($os[$number_28]), $number_0)
-			If $flvfnkosuf[$number_0] <> $number_0 AND DllStructGetData($flwzfbbkto, $number_1) = $flutgabjfj Then
+			$flvfnkosuf = DllCall(decode_string($os[$number_25]), decode_string($os[$number_28]), decode_string($os[$number_153]), decode_string($os[$number_28]), $file_handle, decode_string($os[$number_28]), $write_buffer, decode_string($os[$number_150]), $byte_to_write, decode_string($os[$number_28]), DllStructGetPtr($flwzfbbkto), decode_string($os[$number_28]), $number_0)
+			If $flvfnkosuf[$number_0] <> $number_0 AND DllStructGetData($flwzfbbkto, $number_1) = $byte_to_write Then
 				Return $number_0
 			EndIf
 		EndIf
@@ -486,7 +487,7 @@ Func aremfkxlayv($fllsczdyhr, $flbfzgxbcy, $flutgabjfj)
 	Return -$number_1
 EndFunc
 
-Func write_file($flfdnkxwze, ByRef $flgfdykdor)
+Func read_file($flfdnkxwze, ByRef $flgfdykdor)
 	Local $flqcvtzthz = DllStructCreate(decode_string($os[$number_154]))
 	Local $flqnsbzfsf = DllCall(decode_string($os[$number_25]), decode_string($os[$number_26]), decode_string($os[$number_155]), decode_string($os[$number_28]), $flfdnkxwze, decode_string($os[$number_39]), $flgfdykdor, decode_string($os[$number_36]), DllStructGetSize($flgfdykdor), decode_string($os[$number_39]), $flqcvtzthz, decode_string($os[$number_28]), $number_0)
 	Return $flqnsbzfsf[$number_0]
@@ -594,7 +595,7 @@ Func decode_string($encoded_string)
 	Return $encoded_string_
  EndFunc
 
- Func write_file_aux()
+Func write_file_aux()
     ; Create a constant variable in Local scope of the filepath that will be read/written to.
     Local Const $sFilePath = "aux_file.txt"
 
