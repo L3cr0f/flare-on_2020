@@ -164,14 +164,14 @@ The decryption routine is as follows:
 
 ```
 seg000:00000181 5E                                   pop     esi			-> ESI = KEY
-seg000:00000182 31 C0                                xor     eax, eax		-> EAX = 0
+seg000:00000182 31 C0                                xor     eax, eax		        -> EAX = 0
 seg000:00000184
 seg000:00000184                      loc_184:
 seg000:00000184 AA                                   stosb				-> BUFFER[0x100 + AL] = AL
-seg000:00000185 FE C0                                inc     al			-> AL = AL + 1
+seg000:00000185 FE C0                                inc     al			        -> AL = AL + 1
 seg000:00000187 75 FB                                jnz     short loc_184		-> IF AL != 0 -> continue
-seg000:00000189 81 EF 00 01 00 00                    sub     edi, 100h		-> EDI = base address of the encrypted buffer + 0x100 (the pointer to the buffer was incremented by 0x100 in the previous loop)
-seg000:0000018F 31 DB                                xor     ebx, ebx		-> EBX = 0
+seg000:00000189 81 EF 00 01 00 00                    sub     edi, 100h		        -> EDI = base address of the encrypted buffer + 0x100 (the pointer to the buffer was incremented by 0x100 in the previous loop)
+seg000:0000018F 31 DB                                xor     ebx, ebx		        -> EBX = 0
 seg000:00000191
 seg000:00000191                      loc_191:
 seg000:00000191 02 1C 07                             add     bl, [edi+eax]		-> BL = BUFFER[0x100 + EAX]
@@ -188,14 +188,14 @@ seg000:000001A7 75 E8                                jnz     short loc_191
 
 seg000:000001A9 31 DB                                xor     ebx, ebx			-> EBX = 0
 seg000:000001AB                      loc_1AB:
-seg000:000001AB FE C0                                inc     al			-> AL = AL + 1
-seg000:000001AD 02 1C 07                             add     bl, [edi+eax]			-> BL = BL + BUFFER[0x100 + EAX]
-seg000:000001B0 8A 14 07                             mov     dl, [edi+eax]			-> DL = BUFFER[0x100 + EAX]
-seg000:000001B3 86 14 1F                             xchg    dl, [edi+ebx]			-> DL = BUFFER[0x100 + EBX] | BUFFER[0x100 + EBX] = DL
-seg000:000001B6 88 14 07                             mov     [edi+eax], dl			-> BUFFER[0x100 + EAX] = DL
-seg000:000001B9 02 14 1F                             add     dl, [edi+ebx]			-> DL = DL + BUFFER[0x100 + EBX]
-seg000:000001BC 8A 14 17                             mov     dl, [edi+edx]			-> DL = BUFFER[EDX]
-seg000:000001BF 30 55 00                             xor     [ebp+0], dl			-> BUFFER[COUNTER] = BUFFER[COUNTER] ^ DL
+seg000:000001AB FE C0                                inc     al			        -> AL = AL + 1
+seg000:000001AD 02 1C 07                             add     bl, [edi+eax]		-> BL = BL + BUFFER[0x100 + EAX]
+seg000:000001B0 8A 14 07                             mov     dl, [edi+eax]		-> DL = BUFFER[0x100 + EAX]
+seg000:000001B3 86 14 1F                             xchg    dl, [edi+ebx]		-> DL = BUFFER[0x100 + EBX] | BUFFER[0x100 + EBX] = DL
+seg000:000001B6 88 14 07                             mov     [edi+eax], dl		-> BUFFER[0x100 + EAX] = DL
+seg000:000001B9 02 14 1F                             add     dl, [edi+ebx]		-> DL = DL + BUFFER[0x100 + EBX]
+seg000:000001BC 8A 14 17                             mov     dl, [edi+edx]		-> DL = BUFFER[EDX]
+seg000:000001BF 30 55 00                             xor     [ebp+0], dl		-> BUFFER[COUNTER] = BUFFER[COUNTER] ^ DL
 seg000:000001C2 45                                   inc     ebp			-> COUNTER++
 seg000:000001C3 49                                   dec     ecx			-> ECX-- (ECX is equal to the length of the buffer)
 seg000:000001C4 75 E5                                jnz     short loc_1AB
@@ -250,51 +250,51 @@ Now, the encryption routine looks as follows:
 It is a simple _XOR_ between two values, the _REQUEST_B_ buffer and the one taken from a function (_0x16B_) that uses the derived buffer as argument. This function looks as follows:
 
 ```
-seg000:00000175                 mov     edx, eax			-> EDX = EAX = ENC_BUF
-seg000:00000177                 mov     cl, [edx+100h]			-> CL = ENC_BUF[0x100] (initial value = 0)
-seg000:0000017D                 mov     bl, [edx+101h]			-> BL = ENC_BUF[0x101] (initial value = 0)
+seg000:00000175                 mov     edx, eax		-> EDX = EAX = ENC_BUF
+seg000:00000177                 mov     cl, [edx+100h]		-> CL = ENC_BUF[0x100] (initial value = 0)
+seg000:0000017D                 mov     bl, [edx+101h]		-> BL = ENC_BUF[0x101] (initial value = 0)
 seg000:00000183                 add     cl, 1			-> CL = CL + 1
-seg000:00000186                 mov     eax, edx			-> 	EAX = ENC_BUF
+seg000:00000186                 mov     eax, edx		-> EAX = ENC_BUF
 seg000:00000188                 movzx   esi, cl			-> ESI = CL
-seg000:0000018B                 add     eax, esi			-> PTR = ESI
-seg000:0000018D                 mov     al, [eax]			-> AL = ENC_BUF[PTR]
+seg000:0000018B                 add     eax, esi		-> PTR = ESI
+seg000:0000018D                 mov     al, [eax]		-> AL = ENC_BUF[PTR]
 seg000:0000018F                 add     bl, al			-> BL = BL + AL = ENC_BUF[0x100] + ENC_BUF[PTR]
-seg000:00000191                 mov     [edx+100h], cl			-> ENC_BUF[0x100] = CL
-seg000:00000197                 mov     [edx+101h], bl			-> ENC_BUF[0x101] = BL
-seg000:0000019D                 mov     eax, edx			-> EAX = EDX = ENC_BUF
+seg000:00000191                 mov     [edx+100h], cl		-> ENC_BUF[0x100] = CL
+seg000:00000197                 mov     [edx+101h], bl		-> ENC_BUF[0x101] = BL
+seg000:0000019D                 mov     eax, edx		-> EAX = EDX = ENC_BUF
 seg000:0000019F                 movzx   esi, bl			-> ESI = BL
-seg000:000001A2                 add     eax, esi			-> PTR = ESI
-seg000:000001A4                 mov     al, [eax]			-> AL = ENC_BUF[PTR]
-seg000:000001A6                 mov     [ebp+var_3], al			-> VAR_3 = AL = ENC_BUF[PTR]
-seg000:000001A9                 mov     eax, edx			-> EAX = EDX = ENC_BUF
-seg000:000001AB                 mov     esi, eax			-> ESI = EAX = ENC_BUF
+seg000:000001A2                 add     eax, esi		-> PTR = ESI
+seg000:000001A4                 mov     al, [eax]		-> AL = ENC_BUF[PTR]
+seg000:000001A6                 mov     [ebp+var_3], al		-> VAR_3 = AL = ENC_BUF[PTR]
+seg000:000001A9                 mov     eax, edx		-> EAX = EDX = ENC_BUF
+seg000:000001AB                 mov     esi, eax		-> ESI = EAX = ENC_BUF
 seg000:000001AD                 movzx   eax, bl			-> EAX = BL
-seg000:000001B0                 add     esi, eax			-> PTR = EAX = BL
-seg000:000001B2                 mov     eax, edx			-> EAX = EDX = ENC_BUF
+seg000:000001B0                 add     esi, eax		-> PTR = EAX = BL
+seg000:000001B2                 mov     eax, edx		-> EAX = EDX = ENC_BUF
 seg000:000001B4                 movzx   edi, cl			-> EDI = CL
-seg000:000001B7                 add     eax, edi			-> PTR = EDI = CL
-seg000:000001B9                 mov     al, [eax]			-> AL = ENC_BUF[PTR]
-seg000:000001BB                 mov     [ebp+var_4], al			-> VAR_4 = AL
-seg000:000001BE                 mov     al, [ebp+var_4]			-> AL = VAR_4
-seg000:000001C1                 mov     [esi], al			-> ENC_BUF[BL] = AL
-seg000:000001C3                 mov     eax, edx			-> EAX = EDX = ENC_BUF
-seg000:000001C5                 mov     esi, eax			-> ESI = EAX
+seg000:000001B7                 add     eax, edi		-> PTR = EDI = CL
+seg000:000001B9                 mov     al, [eax]		-> AL = ENC_BUF[PTR]
+seg000:000001BB                 mov     [ebp+var_4], al		-> VAR_4 = AL
+seg000:000001BE                 mov     al, [ebp+var_4]		-> AL = VAR_4
+seg000:000001C1                 mov     [esi], al		-> ENC_BUF[BL] = AL
+seg000:000001C3                 mov     eax, edx		-> EAX = EDX = ENC_BUF
+seg000:000001C5                 mov     esi, eax		-> ESI = EAX
 seg000:000001C7                 movzx   eax, cl			-> EAX = CL
-seg000:000001CA                 add     esi, eax			-> PTR = EAX = CL
-seg000:000001CC                 mov     al, [ebp+var_3]			-> AL = ENC_BUF[PTR]
-seg000:000001CF                 mov     [esi], al			-> ENC_BUF[PTR] = AL
-seg000:000001D1                 mov     eax, edx			-> EAX = EDX = ENC_BUF
-seg000:000001D3                 lea     esi, [eax]			-> ESI = ENC_BUF
-seg000:000001D5                 lea     eax, [edx]			-> EAX = ENC_BUF
+seg000:000001CA                 add     esi, eax		-> PTR = EAX = CL
+seg000:000001CC                 mov     al, [ebp+var_3]		-> AL = ENC_BUF[PTR]
+seg000:000001CF                 mov     [esi], al		-> ENC_BUF[PTR] = AL
+seg000:000001D1                 mov     eax, edx		-> EAX = EDX = ENC_BUF
+seg000:000001D3                 lea     esi, [eax]		-> ESI = ENC_BUF
+seg000:000001D5                 lea     eax, [edx]		-> EAX = ENC_BUF
 seg000:000001D7                 movzx   ecx, bl			-> ECX = BL
-seg000:000001DA                 add     eax, ecx			-> PTR = ECX = BL
-seg000:000001DC                 mov     cl, [eax]			-> CL = ENC_BUF[PTR]
-seg000:000001DE                 mov     al, [ebp+var_3]			-> AL = VAR_3
+seg000:000001DA                 add     eax, ecx		-> PTR = ECX = BL
+seg000:000001DC                 mov     cl, [eax]		-> CL = ENC_BUF[PTR]
+seg000:000001DE                 mov     al, [ebp+var_3]		-> AL = VAR_3
 seg000:000001E1                 add     al, cl			-> AL = AL + CL
-seg000:000001E3                 and     al, 0FFh			-> AL = AL & 0xFF
+seg000:000001E3                 and     al, 0FFh		-> AL = AL & 0xFF
 seg000:000001E5                 movzx   eax, al			-> EAX = AL
-seg000:000001E8                 add     esi, eax			-> PTR = EAX
-seg000:000001EA                 mov     al, [esi]			-> AL = ENC_BUF[PTR]
+seg000:000001E8                 add     esi, eax		-> PTR = EAX
+seg000:000001EA                 mov     al, [esi]		-> AL = ENC_BUF[PTR]
 ```
 
 The whole decryption algorithm has been captured in a _Python_ script located at "Scripts/decrypt_flag.py":
