@@ -4,6 +4,8 @@ def encoded_data_initialization(encoded_data):
 	for counter in range(len(encoded_data)):
 		encoded_data[counter] = encoded_data[counter] ^ 0x4F
 
+	return encoded_data
+
 def decode_data_mnt(encoded_data, string):
 	global global_counter
 	
@@ -11,12 +13,16 @@ def decode_data_mnt(encoded_data, string):
 		encoded_data[global_counter] = encoded_data[global_counter] ^ ord(string[counter])
 		global_counter = (global_counter + 1) & 0xF
 
+	return encoded_data
+
 def decode_data_version_signature(encoded_data, string):
 	global global_counter
 	
 	for counter in range(9):
 		encoded_data[global_counter] = encoded_data[global_counter] ^ ord(string[counter])
 		global_counter = (global_counter + 1) & 0xF
+
+	return encoded_data
 
 def decode_data_elf_pheader_vaddr_proc_lxstat(encoded_data, value):
 	global global_counter
@@ -26,6 +32,7 @@ def decode_data_elf_pheader_vaddr_proc_lxstat(encoded_data, value):
 		value = value >> 0x8
 		global_counter = (global_counter + 1) & 0xF
 
+	return encoded_data
 
 def read_mnt(encoded_data):
 	with open("proc_mnt.txt","r") as mnt_file:
@@ -36,15 +43,17 @@ def read_mnt(encoded_data):
 				if splitted_line[2][0] != "f":
 					for i in range(1, len(splitted_line[2])):
 						if splitted_line[2][i] == "f":
-							decode_data_mnt(encoded_data, splitted_line[2][i:])
+							encoded_data = decode_data_mnt(encoded_data, splitted_line[2][i:])
 							break
+	return encoded_data
 
 # Ubuntu
 def read_version_signature(encoded_data):
 	with open("version_signature.txt","r") as mnt_file:
 		line = mnt_file.readline()
-		decode_data_version_signature(encoded_data, line)
+		encoded_data = decode_data_version_signature(encoded_data, line)
 
+	return encoded_data
 
 def read_elf_pheader_vaddr(encoded_data):
 	vaddr_values = [0x40, 0x238, 0x0, 0x201D28, 0x201D38, 0x254, 0x16B0, 0x0, 0x201D28]
@@ -52,7 +61,9 @@ def read_elf_pheader_vaddr(encoded_data):
 	for vaddr in vaddr_values:
 		value = vaddr >> 0x10
 		if value != 0:
-			decode_data_elf_pheader_vaddr_proc_lxstat(encoded_data, value)
+			encoded_data = decode_data_elf_pheader_vaddr_proc_lxstat(encoded_data, value)
+
+	return encoded_data
 
 # Debian
 def read_proc_lxstat(encoded_data):
@@ -61,7 +72,9 @@ def read_proc_lxstat(encoded_data):
 	for inode in inode_values:
 		value = inode >> 0x10
 		if value != 0:
-			decode_data_elf_pheader_vaddr_proc_lxstat(encoded_data, value)
+			encoded_data = decode_data_elf_pheader_vaddr_proc_lxstat(encoded_data, value)
+
+	return encoded_data
 
 def return_flag(data):
 	return data.decode("UTF-8") + "@flare-on.com"
@@ -69,11 +82,10 @@ def return_flag(data):
 global_counter = 0
 encoded_data = bytearray([0x4A, 0x82, 0x43, 0xAB, 0x95, 0xED, 0x8F, 0x7E, 0x9C, 0xBC, 0xAD, 0x84, 0x17, 0x91, 0x06, 0x15])
 
-encoded_data_initialization(encoded_data)
-read_mnt(encoded_data)
-read_version_signature(encoded_data)
-read_elf_pheader_vaddr(encoded_data)
-read_proc_lxstat(encoded_data)
-print(encoded_data)
+encoded_data = encoded_data_initialization(encoded_data)
+encoded_data = read_mnt(encoded_data)
+encoded_data = read_version_signature(encoded_data)
+encoded_data = read_elf_pheader_vaddr(encoded_data)
+encoded_data = read_proc_lxstat(encoded_data)
 print(return_flag(encoded_data))
 
