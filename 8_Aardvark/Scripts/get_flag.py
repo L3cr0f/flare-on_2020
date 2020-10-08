@@ -1,14 +1,19 @@
 MAX_BYTE_VALUE = 0xFF
 
+def print_bytearray(data):
+	for byte in data:
+		print(hex(byte) + " ", end="")
+	print()
+
 def encoded_data_initialization(encoded_data):
 	for counter in range(len(encoded_data)):
 		encoded_data[counter] = encoded_data[counter] ^ 0x4F
 
-def decode_data_mnt(encoded_data, string):
+def decode_data_modules_mnt(encoded_data, string):
 	global global_counter
 	
-	for counter in range(len(string)):
-		encoded_data[global_counter] = encoded_data[global_counter] ^ ord(string[counter])
+	for char in string:
+		encoded_data[global_counter] = encoded_data[global_counter] ^ ord(char)
 		global_counter = (global_counter + 1) & 0xF
 
 def decode_data_version_signature(encoded_data, string):
@@ -25,8 +30,7 @@ def decode_data_elf_pheader_vaddr_proc_lxstat(encoded_data, value):
 		encoded_data[global_counter] = encoded_data[global_counter] ^ (value & MAX_BYTE_VALUE)
 		value = value >> 0x8
 		global_counter = (global_counter + 1) & 0xF
-
-
+# Ubuntu
 def read_mnt(encoded_data):
 	with open("proc_mnt.txt","r") as mnt_file:
 		lines = mnt_file.read().splitlines()
@@ -36,7 +40,7 @@ def read_mnt(encoded_data):
 				if splitted_line[2][0] != "f":
 					for i in range(1, len(splitted_line[2])):
 						if splitted_line[2][i] == "f":
-							decode_data_mnt(encoded_data, splitted_line[2][i:])
+							decode_data_modules_mnt(encoded_data, splitted_line[2][i:])
 							break
 
 # Ubuntu
@@ -64,16 +68,15 @@ def read_proc_lxstat(encoded_data):
 			decode_data_elf_pheader_vaddr_proc_lxstat(encoded_data, value)
 
 def return_flag(data):
-	return data.decode("UTF-8") + "@flare-on.com"
+	return data.decode("unicode_escape") + "@flare-on.com"
 
 global_counter = 0
 encoded_data = bytearray([0x4A, 0x82, 0x43, 0xAB, 0x95, 0xED, 0x8F, 0x7E, 0x9C, 0xBC, 0xAD, 0x84, 0x17, 0x91, 0x06, 0x15])
 
 encoded_data_initialization(encoded_data)
+#decode_data_modules_mnt(encoded_data, "cpufreq_")
 read_mnt(encoded_data)
 read_version_signature(encoded_data)
 read_elf_pheader_vaddr(encoded_data)
-read_proc_lxstat(encoded_data)
-print(encoded_data)
+#read_proc_lxstat(encoded_data)
 print(return_flag(encoded_data))
-
