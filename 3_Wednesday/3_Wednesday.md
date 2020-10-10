@@ -97,10 +97,10 @@ So, if we take a look at _0x43EB48_, we will see the following data:
 
 Mmmmm... Sounds like the obstacle positions of the game! Also the data has a length of _0x128_!
 
-We have developed a _Python_ script that executes the algorithm of the _getFlag_ function to see if this is the data we were looking for and (the script name is _flag_decoder.py_)...
+We have developed a _Python_ script that executes the algorithm of the _getFlag_ function to see if this is the data we were looking for and (the script is at "Scripts/get_flag.py")...
 
 ```
-$ python3 flag_decoder.py 
+$ python3 get_flag.py 
 
 1t_i5_wEdn3sd4y_mY_Dud3s@flare-on.com
 ```

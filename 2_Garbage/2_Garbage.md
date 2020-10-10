@@ -91,10 +91,10 @@ inc     edi			-> COUNTER++
 cmp     edi, [esi+4]		-> if (COUNTER < LENGTH)
 jb      short loc_401025
 ```
-Which we have converted (including the encrypted data and the keys) to the python script located in the same path with the name _garbage_xor.py_. 
+Which we have converted (including the encrypted data and the keys) to the python script located at "Scripts/get_flag.py". 
 
 ```
-$ python3 garbage_xor.py 
+$ python3 get_flag.py 
 
 The decrypted strings are:
 sink_the_tanker.vbs
