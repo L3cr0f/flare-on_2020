@@ -71,12 +71,10 @@ def get_flag(score):
 				EBX = sign_extend(EBX, 8)
 				EDX = EBX + EBX
 				EBX = EDX
-				EDX = (EDX - sign_extend(0xFFFFFF80, 32)) & MAX_VALUE
 		else:
-			EBX = sign_extend(EBX, 8)
+			EBX = EBX & 8
 			EDX = EBX + EBX
 			EBX = EDX
-			EDX = (EDX - 0xFFFFFF80) & MAX_VALUE
 		EBP = ESI
 
 	return final_string
